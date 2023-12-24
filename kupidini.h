@@ -13,6 +13,7 @@
 /* * * LEXER * * */
 #define KUPIDINI_SPECIAL "=:[]"
 #define KUPIDINI_LINE "\n\r"
+#define KUPIDINI_WHITESPACE " \t"
 
 /* * * PARSER * * */
 /* By default, notating with colon is supported */

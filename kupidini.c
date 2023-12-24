@@ -7,19 +7,25 @@ KUPIDINI_BOOL is_inside(const char c, const char *const s) {
 }
 
 KupidiniLexed kupidini_lex(char **ss, size_t l) {
-	char *s = *ss;
-	KUPIDINI_SIZE i = 0;
+	char *s;
 
-	if ('\0' == s[i]) {
+	while (l != 0 && is_inside(**ss, KUPIDINI_WHITESPACE)) {
+		*ss += 1;
+		l -= 1;
+	}
+
+	s = *ss;
+
+	if ('\0' == *s) {
 		KupidiniLexed r = {KupidiniLexed_Type_Newline, {'\0'}};
 		return r;
-	} else if (is_inside(s[i], KUPIDINI_SPECIAL)) {
+	} else if (is_inside(*s, KUPIDINI_SPECIAL)) {
 		KupidiniLexed r = {KupidiniLexed_Type_Special};
-		r.data.c = s[i];
+		r.data.c = *s;
 
 		*ss += 1;
 		return r;
-	} else if (is_inside(s[i], KUPIDINI_LINE)) {
+	} else if (is_inside(*s, KUPIDINI_LINE)) {
 		KupidiniLexed r = {KupidiniLexed_Type_Newline, {'\n'}};
 		for (;;) {
 			*ss += 1;
@@ -40,7 +46,7 @@ KupidiniLexed kupidini_lex(char **ss, size_t l) {
 		for (;;) {
 			*ss += 1;
 
-			if (!**ss || is_inside(**ss, KUPIDINI_SPECIAL KUPIDINI_LINE)) break;
+			if (!**ss || is_inside(**ss, KUPIDINI_SPECIAL" "KUPIDINI_LINE)) break;
 
 			if (*ss - s >= l) {
 				*ss = s;

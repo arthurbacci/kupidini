@@ -6,7 +6,6 @@
 void output_r(char *s, KUPIDINI_SIZE l) {
 	char *limit = s + l;
 
-	char *before = NULL;
 	KupidiniLexed le;
 	for (;;) {
 		le = kupidini_lex(&s, limit - s);

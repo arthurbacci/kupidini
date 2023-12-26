@@ -30,6 +30,8 @@ void test1() {
 	OUTPUT_R("[Section]\n\nwhen the = still sea\n\nwho? why!");
 	printf("\n");
 	OUTPUT_R("[[Section]]\n\nwhen the === still sea\n\nwho? why!\n\n\r\n");
+	printf("\n");
+	OUTPUT_R("[[Sec\\]tion]]\n\nwhen\\\n the === s\\\\till sea\n\nwho? why!\n\n\r\n");
 }
 
 int main() {

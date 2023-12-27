@@ -1,6 +1,10 @@
 #ifndef KUPIDINI_H
 #define KUPIDINI_H
 
+/*
+ *	NOTE: it may be fine to parse linebreaks as special characters
+ */
+
 #include <stddef.h>
 
 
@@ -11,33 +15,18 @@
 #define KUPIDINI_FALSE 0
 
 /* * * LEXER * * */
-#define KUPIDINI_SPECIAL "=:[]"
+#define KUPIDINI_SPECIAL "=:[].#;"
 #define KUPIDINI_LINE "\n\r"
 #define KUPIDINI_WHITESPACE " \t"
+#define KUPIDINI_ESCAPE "\\"
 
 /* * * PARSER * * */
 /* By default, notating with colon is supported */
 #define KUPIDINI_EQUALSIGN "=:"
 #define KUPIDINI_START_SECTION "["
 #define KUPIDINI_END_SECTION "]"
+#define KUPIDINI_COMMENT "#;"
 
-typedef struct {
-	char *s;
-	KUPIDINI_SIZE l;
-} KupidiniSlice;
-
-typedef struct {
-	enum KupidiniLexed_Type {
-		KupidiniLexed_Type_Special,
-		KupidiniLexed_Type_Identifier,
-		KupidiniLexed_Type_Newline
-
-	} type;
-	union {
-		char c;
-		KupidiniSlice s;
-	} data;
-} KupidiniLexed;
 
 /* Give it a pointer to a string with at least the specified length */
 /* The pointer is advanced to the next place symbol */
@@ -45,10 +34,32 @@ typedef struct {
 you should try again (with more len) or that it's done lexing (check if it's
 pointing to a null byte) */
 /* The end of the file is denoted with a null byte */
-/* The returned value "has the same lifetime" of the string argument. If you
-need to destroy or mutate the string (buffering?), please copy the
-KupidiniSlice if its an identifier */
-KupidiniLexed kupidini_lex(char **, KUPIDINI_SIZE);
+char *kupidini_lex(char **, KUPIDINI_SIZE);
+KUPIDINI_BOOL kupidini_is_inside(const char, const char *const);
+
+
+typedef enum {
+	/* No values set */
+	KupidiniParsedType_FEEDMORE,
+	/* No values set */
+	KupidiniParsedType_ERROR,
+	/* No values set */
+	KupidiniParsedType_COMMENT,
+	/* [ X ] => a = X */
+	KupidiniParsedType_SECTION,
+	/* X = Y => a = X; b = Y */
+	KupidiniParsedType_KEYVALUE,
+	/* X     => a = X */
+	KupidiniParsedType_KEY
+} KupidiniParsedType;
+
+KupidiniParsedType kupidini_parse(
+	char **, KUPIDINI_SIZE,
+	char **a, KUPIDINI_SIZE *as,
+	char **b, KUPIDINI_SIZE *bs
+);
+
+
 
 #endif
 
